@@ -19,7 +19,7 @@ from tensorflow.contrib.distributions import Normal
 import numpy as np
 import matplotlib.pyplot as plt
 import threading, queue
-from arm_env import ArmEnv
+from experiments.Robot_arm.arm_env import ArmEnv
 
 
 EP_MAX = 2000

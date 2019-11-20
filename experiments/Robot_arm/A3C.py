@@ -22,7 +22,7 @@ import multiprocessing
 import threading
 import tensorflow as tf
 import numpy as np
-from arm_env import ArmEnv
+from experiments.Robot_arm.arm_env import ArmEnv
 
 
 # np.random.seed(1)

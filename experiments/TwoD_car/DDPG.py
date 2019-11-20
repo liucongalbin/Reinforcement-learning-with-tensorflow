@@ -21,7 +21,7 @@ import tensorflow as tf
 import numpy as np
 import os
 import shutil
-from car_env import CarEnv
+from experiments.TwoD_car.car_env import CarEnv
 
 
 np.random.seed(1)

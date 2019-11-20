@@ -11,7 +11,7 @@ gym: 0.8.0
 
 import gym
 from gym import wrappers
-from DuelingDQNPrioritizedReplay import DuelingDQNPrioritizedReplay
+from experiments.Solve_LunarLander.DuelingDQNPrioritizedReplay import DuelingDQNPrioritizedReplay
 
 env = gym.make('LunarLander-v2')
 # env = env.unwrapped

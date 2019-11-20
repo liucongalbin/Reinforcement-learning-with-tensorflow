@@ -21,7 +21,7 @@ import tensorflow as tf
 import numpy as np
 import os
 import shutil
-from arm_env import ArmEnv
+from experiments.Robot_arm.arm_env import ArmEnv
 
 
 np.random.seed(1)
