@@ -28,6 +28,7 @@ class Actor(object):
         self.a = tf.placeholder(tf.float32, None, name="act")
         self.td_error = tf.placeholder(tf.float32, None, name="td_error")  # TD_error
 
+        # 拟合一个正态分布网络，基于状态，预测动作
         l1 = tf.layers.dense(
             inputs=self.s,
             units=30,  # number of hidden units
@@ -46,9 +47,11 @@ class Actor(object):
             name='mu'
         )
 
+        # 输入也是l1，和mu节点平行关系
         sigma = tf.layers.dense(
             inputs=l1,
             units=1,  # output units
+            # 激活函数不一样
             activation=tf.nn.softplus,  # get action probabilities
             kernel_initializer=tf.random_normal_initializer(0., .1),  # weights
             bias_initializer=tf.constant_initializer(1.),  # biases
@@ -56,11 +59,19 @@ class Actor(object):
         )
         global_step = tf.Variable(0, trainable=False)
         # self.e = epsilon = tf.train.exponential_decay(2., global_step, 1000, 0.9)
+        # 删除维度为1的维度
+        # 't' 是一个维度是[1, 2, 1, 3, 1, 1]的张量
+        # tf.shape(tf.squeeze(t))  # [2, 3]， 默认删除所有为1的维度
         self.mu, self.sigma = tf.squeeze(mu*2), tf.squeeze(sigma+0.1)
+
+        # 构造正态分布，传入“均值”、“标准差”
         self.normal_dist = tf.distributions.Normal(self.mu, self.sigma)
 
+        # 动作预测
+        # clip，把一个随机值，修剪到一个值域（模型对力有最大、最小限制）
         self.action = tf.clip_by_value(self.normal_dist.sample(1), action_bound[0], action_bound[1])
 
+        # 损失计算
         with tf.name_scope('exp_v'):
             log_prob = self.normal_dist.log_prob(self.a)  # loss without advantage
             self.exp_v = log_prob * self.td_error  # advantage (TD_error) guided loss
@@ -76,6 +87,7 @@ class Actor(object):
         _, exp_v = self.sess.run([self.train_op, self.exp_v], feed_dict)
         return exp_v
 
+    # 基于状态，选择一个动作
     def choose_action(self, s):
         s = s[np.newaxis, :]
         return self.sess.run(self.action, {self.s: s})  # get probabilities for all actions
